@@ -27,5 +27,9 @@ public class PrivilegeEntity {
     private Collection<RoleEntity> roles;
 
     public PrivilegeEntity() {}
+
+    public PrivilegeEntity(final String name) {
+        this.name = name;
+    }
     
 }

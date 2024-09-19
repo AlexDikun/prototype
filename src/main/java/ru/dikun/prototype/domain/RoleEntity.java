@@ -23,8 +23,8 @@ public class RoleEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "position")
-    private String position;
+    @Column(name = "name")
+    private String name;
 
     @ManyToMany
     @JoinTable(
@@ -36,5 +36,9 @@ public class RoleEntity {
     private Collection<PrivilegeEntity> privileges;
 
     public RoleEntity() {}
+
+    public RoleEntity(final String name) {
+        this.name = name;
+    }
     
 }
