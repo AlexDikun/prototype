@@ -6,9 +6,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.dikun.prototype.controllers.dto.UserDto;
 import ru.dikun.prototype.domain.PrivilegeEntity;
 import ru.dikun.prototype.domain.RoleEntity;
 import ru.dikun.prototype.domain.UserEntity;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 @Service
 @Transactional
@@ -29,6 +32,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     RoleRepo roleRepo;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(final String login) {
@@ -73,5 +79,23 @@ public class UserService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> getAuthorities(final Collection<RoleEntity> roles) {
         return getGrantedAuthorities(getPrivileges(roles));
+    }
+
+    // может и не в этом классе?
+
+    public UserEntity registerNewUser(UserDto accountDto) {
+        if (loginExists(accountDto.getLogin())) {
+            return null;   
+        }
+
+        UserEntity user = new UserEntity();
+        user.setLogin(accountDto.getLogin());
+        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+        user.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STUFF").get()));
+        return userRepo.save(user);
+    }
+
+    private boolean loginExists(String login) {
+        return userRepo.findByLogin(login) != null;
     }
 }
