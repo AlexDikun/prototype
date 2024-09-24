@@ -91,7 +91,7 @@ public class UserService implements UserDetailsService {
         UserEntity user = new UserEntity();
         user.setLogin(accountDto.getLogin());
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        user.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STUFF").get()));
+        user.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STAFF").get()));
         return userRepo.save(user);
     }
 

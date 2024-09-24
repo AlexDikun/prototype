@@ -36,7 +36,7 @@ public class UserController {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin(dto.getLogin());
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
-        userEntity.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STUFF").get()));
+        userEntity.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STAFF").get()));
         userRepo.save(userEntity);
 
         dto.setId(userEntity.getId());

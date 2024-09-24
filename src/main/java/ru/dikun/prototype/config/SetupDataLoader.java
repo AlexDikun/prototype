@@ -89,15 +89,29 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         // == create init pirivileges
         final PrivilegeEntity readPrivilege = createPrivilege("READ_PRIVILEGE");
-        final PrivilegeEntity writePrivilege = createPrivilege("WRITE_PRIVILEGE");
-        final PrivilegeEntity passwordPrivilege = createPrivilege("CHANGE_PASSWORD_PRIVILEGE");
+        final PrivilegeEntity writeAccountPrivilege = createPrivilege("WRITE_USER_PRIVILEGE");
+        final PrivilegeEntity stateSwitchPrivilege = createPrivilege("CHANGE_STATE_PRIVILEGE");
+        final PrivilegeEntity writeSwitchPrivilege = createPrivilege("WRITE_SWITCH_PRIVILEGE");
+        final PrivilegeEntity writeCommentPrivilege = createPrivilege("WRITE_COMMENT_PRIVILEGE");
 
-        // == create init roles
-        final List<PrivilegeEntity> admPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege, passwordPrivilege));
-        final List<PrivilegeEntity> stuffPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, passwordPrivilege));
+        // == create init roles;
+        final List<PrivilegeEntity> admPrivileges = new ArrayList<>(Arrays
+            .asList(readPrivilege, 
+                    writeAccountPrivilege, 
+                    stateSwitchPrivilege, 
+                    writeSwitchPrivilege, 
+                    writeCommentPrivilege));
+
+        final List<PrivilegeEntity> moderPrivileges = new ArrayList<>(Arrays
+            .asList(readPrivilege, 
+                    writeSwitchPrivilege, 
+                    writeCommentPrivilege));
+                    
+        final List<PrivilegeEntity> staffPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
 
         final RoleEntity adminRole = createRole("ROLE_ADMIN", admPrivileges);
-        createRole("ROLE_STUFF", stuffPrivileges);
+        createRole("ROLE_MODER", moderPrivileges);
+        createRole("ROLE_STAFF", staffPrivileges);
 
         // == create init users FIRST ADMIN in db
         createUser("ADMIN", "ADMIN", new ArrayList<>(Arrays.asList(adminRole)));
@@ -105,5 +119,4 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         alreadySetup = true;
     }
 }
-    
-    
+

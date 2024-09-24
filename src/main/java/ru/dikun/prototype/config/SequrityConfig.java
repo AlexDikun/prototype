@@ -16,7 +16,7 @@ import org.springframework.http.HttpMethod;
 @EnableWebSecurity
 @Configuration
 public class SequrityConfig {
-
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -28,7 +28,7 @@ public class SequrityConfig {
 
         return http.build();
     }
-
+    
     @Bean
     public SecurityExpressionHandler<FilterInvocation> customWebSecurityExpressionHandler() {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
@@ -39,7 +39,7 @@ public class SequrityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_ADMIN > ROLE_MODER \n ROLE_MODER > ROLE_STUFF";
+        String hierarchy = "ROLE_ADMIN > ROLE_MODER \n ROLE_MODER > ROLE_STAFF";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }
