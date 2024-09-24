@@ -43,7 +43,7 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED); 
     }
 
-    @GetMapping("/users")
+    @GetMapping("/user")
     public ResponseEntity<String> userSpeach() {
         System.out.println("Проверка ролевых полномочий");
 
