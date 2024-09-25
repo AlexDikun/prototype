@@ -23,7 +23,7 @@ import java.util.Arrays;
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-    boolean alreadySetup = false;
+    private boolean alreadySetup = false;
 
     @Autowired
     UserRepo userRepo;
