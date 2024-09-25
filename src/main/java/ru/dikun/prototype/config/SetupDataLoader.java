@@ -44,10 +44,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Optional<PrivilegeEntity> optPrivilege = privilegeRepo.findByName(name);
         PrivilegeEntity privilege;
 
-        if (optPrivilege.isPresent()) 
+        if (optPrivilege.isPresent()) {
             privilege = optPrivilege.get();
-        else
+        }
+        else {
             privilege = new PrivilegeEntity(name);
+            privilege = privilegeRepo.save(privilege);
+        }
 
         return privilege;
     }
@@ -57,11 +60,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Optional<RoleEntity> optRole = roleRepo.findByName(name);
         RoleEntity role;
 
-        if (optRole.isPresent())
+        if (optRole.isPresent()) {
             role = optRole.get();
-        else
+        }
+        else {
             role = new RoleEntity(name);
-
+            role.setPrivileges(privileges);
+            role = roleRepo.save(role);
+        }
+    
         return role;
     }
 
@@ -70,15 +77,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Optional<UserEntity> optUser = userRepo.findByLogin(login);
         UserEntity user;
 
-        if (optUser.isPresent())
+        if (optUser.isPresent()) {
             user = optUser.get();
-        else
+        }
+        else {
             user = new UserEntity();
             user.setLogin(login);
             user.setPassword(passwordEncoder.encode(password));
+            user.setRoles(roles);
+            user = userRepo.save(user);
+        }
 
-        user.setRoles(roles);
-        user = userRepo.save(user);
         return user;
     }
 
