@@ -37,6 +37,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    // API
+
     @Transactional
     public PrivilegeEntity createPrivilege(final String name) {
         Optional<PrivilegeEntity> optPrivilege = privilegeRepo.findByName(name);
