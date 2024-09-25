@@ -101,23 +101,23 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         // == create init pirivileges
         final PrivilegeEntity readPrivilege = createPrivilege("READ_PRIVILEGE");
-        final PrivilegeEntity writeAccountPrivilege = createPrivilege("WRITE_USER_PRIVILEGE");
-        final PrivilegeEntity stateSwitchPrivilege = createPrivilege("CHANGE_STATE_PRIVILEGE");
-        final PrivilegeEntity writeSwitchPrivilege = createPrivilege("WRITE_SWITCH_PRIVILEGE");
-        final PrivilegeEntity writeCommentPrivilege = createPrivilege("WRITE_COMMENT_PRIVILEGE");
+        final PrivilegeEntity userWritePrivilege = createPrivilege("USER_WRITE_PRIVILEGE");
+        final PrivilegeEntity switchStatePrivilege = createPrivilege("CHANGE_STATE_PRIVILEGE");
+        final PrivilegeEntity switchWritePrivilege = createPrivilege("SWITCH_WRITE_PRIVILEGE");
+        final PrivilegeEntity commentWritePrivilege = createPrivilege("COMMENT_WRITE_PRIVILEGE");
 
         // == create init roles;
         final List<PrivilegeEntity> admPrivileges = new ArrayList<>(Arrays
             .asList(readPrivilege, 
-                    writeAccountPrivilege, 
-                    stateSwitchPrivilege, 
-                    writeSwitchPrivilege, 
-                    writeCommentPrivilege));
+                    userWritePrivilege, 
+                    switchStatePrivilege, 
+                    switchWritePrivilege, 
+                    commentWritePrivilege));
 
         final List<PrivilegeEntity> moderPrivileges = new ArrayList<>(Arrays
             .asList(readPrivilege, 
-                    writeSwitchPrivilege, 
-                    writeCommentPrivilege));
+                    switchWritePrivilege, 
+                    commentWritePrivilege));
                     
         final List<PrivilegeEntity> staffPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
 
