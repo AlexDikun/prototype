@@ -40,6 +40,45 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     // API
 
+    @Override
+    @Transactional
+    public void onApplicationEvent(final @NonNull ContextRefreshedEvent event) {
+        if (alreadySetup) {
+            return;
+        }
+
+        // == create init privileges
+        final PrivilegeEntity readPrivilege = createPrivilege("READ_PRIVILEGE");
+        final PrivilegeEntity userWritePrivilege = createPrivilege("USER_WRITE_PRIVILEGE");
+        final PrivilegeEntity switchStatePrivilege = createPrivilege("CHANGE_STATE_PRIVILEGE");
+        final PrivilegeEntity switchWritePrivilege = createPrivilege("SWITCH_WRITE_PRIVILEGE");
+        final PrivilegeEntity commentWritePrivilege = createPrivilege("COMMENT_WRITE_PRIVILEGE");
+
+        // == create init roles;
+        final List<PrivilegeEntity> adminPrivileges = new ArrayList<>(Arrays
+            .asList(readPrivilege, 
+                    userWritePrivilege, 
+                    switchStatePrivilege, 
+                    switchWritePrivilege, 
+                    commentWritePrivilege));
+
+        final List<PrivilegeEntity> moderPrivileges = new ArrayList<>(Arrays
+            .asList(readPrivilege, 
+                    switchWritePrivilege, 
+                    commentWritePrivilege));
+                    
+        final List<PrivilegeEntity> staffPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
+
+        final RoleEntity adminRole = createRole("ROLE_ADMIN", adminPrivileges);
+        createRole("ROLE_MODER", moderPrivileges);
+        createRole("ROLE_STAFF", staffPrivileges);
+
+        // == create init users FIRST ADMIN in db
+        createUser("ADMIN", "ADMIN", new ArrayList<>(Arrays.asList(adminRole)));
+
+        alreadySetup = true;
+    }
+
     @Transactional
     public PrivilegeEntity createPrivilege(final String name) {
         Optional<PrivilegeEntity> optPrivilege = privilegeRepo.findByName(name);
@@ -64,10 +103,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             role = optRole.get();
         else {
             role = new RoleEntity(name);
-            role.setPrivileges(privileges);
-            role = roleRepo.save(role);
         }
-    
+        role.setPrivileges(privileges);
+        role = roleRepo.save(role);
         return role;
     }
 
@@ -82,50 +120,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             user = new UserEntity();
             user.setLogin(login);
             user.setPassword(passwordEncoder.encode(password));
-            user.setRoles(roles);
-            user = userRepo.save(user);
         }
-
+        user.setRoles(roles);
+        user = userRepo.save(user);
         return user;
-    }
-
-    @Override
-    @Transactional
-    public void onApplicationEvent(final @NonNull ContextRefreshedEvent event) {
-        if (alreadySetup) {
-            return;
-        }
-
-        // == create init privileges
-        final PrivilegeEntity readPrivilege = createPrivilege("READ_PRIVILEGE");
-        final PrivilegeEntity userWritePrivilege = createPrivilege("USER_WRITE_PRIVILEGE");
-        final PrivilegeEntity switchStatePrivilege = createPrivilege("CHANGE_STATE_PRIVILEGE");
-        final PrivilegeEntity switchWritePrivilege = createPrivilege("SWITCH_WRITE_PRIVILEGE");
-        final PrivilegeEntity commentWritePrivilege = createPrivilege("COMMENT_WRITE_PRIVILEGE");
-
-        // == create init roles;
-        final List<PrivilegeEntity> admPrivileges = new ArrayList<>(Arrays
-            .asList(readPrivilege, 
-                    userWritePrivilege, 
-                    switchStatePrivilege, 
-                    switchWritePrivilege, 
-                    commentWritePrivilege));
-
-        final List<PrivilegeEntity> moderPrivileges = new ArrayList<>(Arrays
-            .asList(readPrivilege, 
-                    switchWritePrivilege, 
-                    commentWritePrivilege));
-                    
-        final List<PrivilegeEntity> staffPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
-
-        final RoleEntity adminRole = createRole("ROLE_ADMIN", admPrivileges);
-        createRole("ROLE_MODER", moderPrivileges);
-        createRole("ROLE_STAFF", staffPrivileges);
-
-        // == create init users FIRST ADMIN in db
-        createUser("ADMIN", "ADMIN", new ArrayList<>(Arrays.asList(adminRole)));
-
-        alreadySetup = true;
     }
 }
 
