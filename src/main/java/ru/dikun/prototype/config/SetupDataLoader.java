@@ -99,7 +99,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
 
-        // == create init priivileges
+        // == create init privileges
         final PrivilegeEntity readPrivilege = createPrivilege("READ_PRIVILEGE");
         final PrivilegeEntity userWritePrivilege = createPrivilege("USER_WRITE_PRIVILEGE");
         final PrivilegeEntity switchStatePrivilege = createPrivilege("CHANGE_STATE_PRIVILEGE");
