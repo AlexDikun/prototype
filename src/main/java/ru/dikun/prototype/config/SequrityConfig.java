@@ -13,7 +13,7 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
 
-@EnableWebSecurity // только для servlet app, нужно закомментировать
+@EnableWebSecurity
 @Configuration
 public class SequrityConfig {
     
