@@ -10,7 +10,7 @@ public class PublicController {
     
     @GetMapping("/public")
     public ResponseEntity<String> helloWorld () {
-        System.out.println("Проверка ролевых полномочий");
+        System.out.println("Проверка ролевых полномочий анонимуса");
 
         return new ResponseEntity<>("Привет мир!", HttpStatus.OK);
     }
