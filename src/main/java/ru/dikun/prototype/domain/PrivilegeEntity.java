@@ -12,7 +12,7 @@ import lombok.Data;
 import java.util.Collection; 
 
 @Entity
-@Table(name = "priveleges")
+@Table(name = "privileges")
 @Data
 public class PrivilegeEntity {
 
