@@ -17,7 +17,7 @@ import org.springframework.http.HttpMethod;
 
 @EnableWebSecurity
 @Configuration
-public class SequrityConfig {
+public class SecurityConfig {
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
