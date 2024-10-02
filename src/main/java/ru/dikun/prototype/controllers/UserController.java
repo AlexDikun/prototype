@@ -5,16 +5,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import ru.dikun.prototype.controllers.dto.UserDto;
+import ru.dikun.prototype.domain.RoleEntity;
 import ru.dikun.prototype.domain.UserEntity;
 import ru.dikun.prototype.repos.RoleRepo;
 import ru.dikun.prototype.repos.UserRepo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import org.springframework.web.bind.annotation.GetMapping;
+import java.util.Optional;
 
 
 @Controller
@@ -41,6 +48,25 @@ public class UserController {
 
         dto.setId(userEntity.getId());
         return new ResponseEntity<>(dto, HttpStatus.CREATED); 
+    }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<String> updatingUserRole(@PathVariable Long id, @RequestParam String role_name) {
+        System.out.println("Администратор назначает пользователю новую роль!");
+
+        Optional<UserEntity> user = userRepo.findById(id);
+        Optional<RoleEntity> newRole = roleRepo.findByName(role_name);
+        
+        if (user.isEmpty())
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
+        else if (newRole.isEmpty())
+            return new ResponseEntity<>("Роль не найдена", HttpStatus.NOT_FOUND);
+        else {
+            user.get().setRoles(new ArrayList<>(Arrays.asList(newRole.get())));
+            userRepo.save(user.get());
+            return new ResponseEntity<>("Роль пользователя обновлена", HttpStatus.OK);
+        }
+            
     }
 
     @GetMapping("/user")
