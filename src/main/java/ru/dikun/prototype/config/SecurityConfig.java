@@ -26,7 +26,13 @@ public class SecurityConfig {
             .securityContext((securityContext) -> securityContext.requireExplicitSave(true))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/roleHierarchy")
-                .hasRole("STAFF"));
+                .hasRole("STAFF")
+                .requestMatchers("/user")
+                .hasAuthority("READ_PRIVELEGE")
+                .requestMatchers("/admin")
+                .hasRole("ADMIN")
+                .requestMatchers("/public")
+                .anonymous());
 
         return http.build();
     }
