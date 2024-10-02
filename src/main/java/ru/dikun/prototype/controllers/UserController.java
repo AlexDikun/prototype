@@ -69,6 +69,22 @@ public class UserController {
             
     }
 
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<String> changeUserPassword(@PathVariable Long id, @RequestBody UserDto dto) {
+        System.out.println("Администратор назначает пользователю новый пароль!");
+
+        Optional<UserEntity> userEntity = userRepo.findById(id);
+        
+        if (userEntity.isEmpty())
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
+        else {
+            userEntity.get().setPassword(passwordEncoder.encode(dto.getPassword()));
+            userRepo.save(userEntity.get());
+            return new ResponseEntity<>("Пароль у учетной записи обновлен!", HttpStatus.OK);
+        }
+
+    }
+
     @GetMapping("/user")
     public ResponseEntity<String> userSpeach() {
         System.out.println("Проверка ролевых полномочий");
