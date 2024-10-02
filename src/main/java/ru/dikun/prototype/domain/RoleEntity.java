@@ -26,6 +26,9 @@ public class RoleEntity {
     @Column(name = "name")
     private String name;
 
+    @ManyToMany(mappedBy = "roles")
+    Collection<UserEntity> users;
+
     @ManyToMany
     @JoinTable(
         name = "roles_privileges", 
