@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .hasRole("STAFF")
                 .requestMatchers("/user")
                 .hasAuthority("READ_PRIVELEGE")
-                .requestMatchers("/admin")
+                .requestMatchers("/admin", "/users/**", "/users")
                 .hasRole("ADMIN")
                 .requestMatchers("/public")
                 .anonymous());
