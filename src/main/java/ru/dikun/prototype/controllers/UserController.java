@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,11 +86,24 @@ public class UserController {
 
     }
 
+    @DeleteMapping("/users")
+    public ResponseEntity<String> deleteUser(@RequestBody UserDto dto) {
+        System.out.println("Администратор удаляет ТОЛЬКО ПО ЛОГИНУ учетную запись пользователя из приложения!");
+
+        Optional<UserEntity> userEntity = userRepo.findByLogin(dto.getLogin());
+        if (userEntity.isEmpty())
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
+        else {
+            userRepo.delete(userEntity.get());
+            return new ResponseEntity<>("Пользователь удалён", HttpStatus.NO_CONTENT);
+        }
+    }
+
     @GetMapping("/user")
     public ResponseEntity<String> userSpeach() {
         System.out.println("Проверка ролевых полномочий");
 
         return new ResponseEntity<>("Я есть пользователь", HttpStatus.OK);
     }
-    
+
 }
