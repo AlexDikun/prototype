@@ -92,6 +92,4 @@ public class UserController {
         return new ResponseEntity<>("Я есть пользователь", HttpStatus.OK);
     }
     
-    
-    
 }
