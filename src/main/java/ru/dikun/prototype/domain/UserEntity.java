@@ -39,4 +39,14 @@ public class UserEntity {
     private Collection<RoleEntity> roles;
     
     public UserEntity() {}
+
+    public void removeRole(RoleEntity role) {
+        this.roles.remove(role);
+        role.getUsers().remove(this);
+    }
+
+    public void addRole(RoleEntity role) {
+        this.roles.add(role);
+        role.getUsers().add(this);
+    }
 }
