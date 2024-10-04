@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,7 +21,6 @@ import ru.dikun.prototype.repos.UserRepo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Collection;
 import java.util.Optional;
 
 
@@ -111,12 +109,4 @@ public class UserController {
             return new ResponseEntity<>("Пользователь удалён", HttpStatus.NO_CONTENT);
         }
     }
-
-    @GetMapping("/user")
-    public ResponseEntity<String> userSpeach() {
-        System.out.println("Проверка ролевых полномочий");
-
-        return new ResponseEntity<>("Я есть пользователь", HttpStatus.OK);
-    }
-
 }
