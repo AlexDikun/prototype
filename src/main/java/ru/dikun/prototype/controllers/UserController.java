@@ -22,6 +22,7 @@ import ru.dikun.prototype.repos.UserRepo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Optional;
 
 
@@ -51,7 +52,7 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED); 
     }
 
-    @PatchMapping("/users/{id}/{role_name}")
+    @PatchMapping("roles/users/{id}/")
     public ResponseEntity<String> updatingUserRole(@PathVariable Long id, @RequestParam String role_name) {
         System.out.println("Администратор назначает пользователю новую роль!");
 
