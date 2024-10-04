@@ -38,7 +38,7 @@ public class UserController {
 
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserEntity> getById(@PathVariable Long id) {
+    public ResponseEntity<UserEntity> checkUserAccount(@PathVariable Long id) {
         System.out.println("Просмотр конкретного пользователя");
 
         Optional<UserEntity> optUserEntity = userRepo.findById(id);
@@ -62,7 +62,7 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED); 
     }
 
-    @PatchMapping("roles/{id}/users/{id}")
+    @PatchMapping("roles/{role_id}/users/{id}")
     public ResponseEntity<String> updatingUserRole(@PathVariable Long role_id, @PathVariable Long id) {
         System.out.println("Администратор назначает пользователю новую роль!");
 
