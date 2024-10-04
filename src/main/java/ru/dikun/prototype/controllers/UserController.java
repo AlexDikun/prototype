@@ -64,12 +64,12 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED); 
     }
 
-    @PatchMapping("roles/users/{id}/")
-    public ResponseEntity<String> updatingUserRole(@PathVariable Long id, @RequestParam String role_name) {
+    @PatchMapping("roles/{id}/users/{id}")
+    public ResponseEntity<String> updatingUserRole(@PathVariable Long role_id, @PathVariable Long id) {
         System.out.println("Администратор назначает пользователю новую роль!");
 
         Optional<UserEntity> user = userRepo.findById(id);
-        Optional<RoleEntity> newRole = roleRepo.findByName(role_name);
+        Optional<RoleEntity> newRole = roleRepo.findById(role_id);
         
         if (user.isEmpty())
             return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
