@@ -38,6 +38,18 @@ public class UserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserEntity> getById(@PathVariable Long id) {
+        System.out.println("Просмотр конкретного пользователя");
+
+        Optional<UserEntity> optUserEntity = userRepo.findById(id);
+        if (optUserEntity.isPresent())
+            return new ResponseEntity<>(optUserEntity.get(), HttpStatus.OK);
+        else 
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
     @PostMapping("/users")
     public ResponseEntity<UserDto> postUsers(@RequestBody UserDto dto) {
         System.out.println("Создание аккаунта пользователя");
