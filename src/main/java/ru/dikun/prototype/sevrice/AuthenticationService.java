@@ -2,28 +2,27 @@ package ru.dikun.prototype.sevrice;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ru.dikun.prototype.controllers.dto.LoginUserDto;
-import ru.dikun.prototype.domain.UserEntity;
-import ru.dikun.prototype.repos.UserRepo;
 
 @Service
 public class AuthenticationService {
 
-    private final UserRepo userRepo;
+    private final UserService userService;
 
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationService(
-        UserRepo userRepo, 
+        UserService userService, 
         AuthenticationManager authenticationManager
         ) {
             this.authenticationManager = authenticationManager;
-            this.userRepo = userRepo;
+            this.userService = userService;
     }
 
-    public UserEntity authenticate(LoginUserDto input) {
+    public UserDetails authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 input.getLogin(), 
@@ -31,6 +30,6 @@ public class AuthenticationService {
             )
         );
 
-        return userRepo.findByLogin(input.getLogin()).get();
+        return userService.loadUserByUsername(input.getLogin());
     }  
 }
