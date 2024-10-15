@@ -6,11 +6,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.dikun.prototype.controllers.dto.UserDto;
 import ru.dikun.prototype.domain.PrivilegeEntity;
 import ru.dikun.prototype.domain.RoleEntity;
 import ru.dikun.prototype.domain.UserEntity;
@@ -21,7 +19,6 @@ import java.util.Optional;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 @Service
 @Transactional
