@@ -51,10 +51,4 @@ public class SecurityConfig {
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-   
 }

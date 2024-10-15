@@ -33,9 +33,6 @@ public class UserService implements UserDetailsService {
     @Autowired
     RoleRepo roleRepo;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
     @Override
     public UserDetails loadUserByUsername(final String login) {
         try {
@@ -79,23 +76,5 @@ public class UserService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> getAuthorities(final Collection<RoleEntity> roles) {
         return getGrantedAuthorities(getPrivileges(roles));
-    }
-
-    // может и не в этом классе?
-
-    public UserEntity registerNewUser(UserDto accountDto) {
-        if (loginExists(accountDto.getLogin())) {
-            return null;   
-        }
-
-        UserEntity user = new UserEntity();
-        user.setLogin(accountDto.getLogin());
-        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        user.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STAFF").get()));
-        return userRepo.save(user);
-    }
-
-    private boolean loginExists(String login) {
-        return userRepo.findByLogin(login) != null;
     }
 }
