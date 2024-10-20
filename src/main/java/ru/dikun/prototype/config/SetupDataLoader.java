@@ -70,11 +70,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final List<PrivilegeEntity> staffPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
 
         final RoleEntity adminRole = createRole("ROLE_ADMIN", adminPrivileges);
-        createRole("ROLE_MODER", moderPrivileges);
-        createRole("ROLE_STAFF", staffPrivileges);
+        final RoleEntity moderRole = createRole("ROLE_MODER", moderPrivileges);
+        final RoleEntity staffRole =  createRole("ROLE_STAFF", staffPrivileges);
 
         // == create init users FIRST ADMIN in db
         createUser("ADMIN", "ADMIN", new ArrayList<>(Arrays.asList(adminRole)));
+
+        // for test in Postman
+        createUser("MODER", "MODER", new ArrayList<>(Arrays.asList(moderRole)));
+        createUser("STAFF", "STAFF", new ArrayList<>(Arrays.asList(staffRole)));
 
         alreadySetup = true;
     }
