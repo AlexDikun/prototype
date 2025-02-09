@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,7 +43,7 @@ public class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    private String token;
+    private String login = "manager@company.ru";
 
     @BeforeEach
     private void setup() {
@@ -56,7 +57,7 @@ public class UserControllerTest {
     }
     @AfterEach
     public void resetDb() {
-        UserEntity manager = userRepo.findByLogin("manager@company.ru").get();
+        UserEntity manager = userRepo.findByLogin(login).get();
         userRepo.delete(manager);
     }
 
@@ -65,6 +66,16 @@ public class UserControllerTest {
     void checkManagerProfile() throws Exception {
         mockMvc.perform(get("/users/{id}", 1L).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 
+    }
+
+    @Test
+    @WithAnonymousUser
+    void cannotCheckManagerProfile() throws Exception {
+
+        UserEntity manager = userRepo.findByLogin(login).get();
+
+        mockMvc.perform(get("/users/{id}", manager.getId()).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
     }
     
 }
