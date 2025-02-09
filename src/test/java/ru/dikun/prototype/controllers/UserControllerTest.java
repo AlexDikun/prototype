@@ -17,8 +17,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.BDDMockito.given;
 
 import ru.dikun.prototype.PrototypeApplication;
 import ru.dikun.prototype.domain.UserEntity;
@@ -64,14 +68,16 @@ public class UserControllerTest {
     @Test
     @WithMockUser(roles="ADMIN")
     void checkManagerProfile() throws Exception {
-        mockMvc.perform(get("/users/{id}", 1L).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        UserEntity manager = userRepo.findByLogin(login).get();
 
+        mockMvc.perform(get("/users/{id}", manager.getId()).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.login", is(manager.getLogin())));
     }
 
     @Test
     @WithAnonymousUser
     void cannotCheckManagerProfile() throws Exception {
-
         UserEntity manager = userRepo.findByLogin(login).get();
 
         mockMvc.perform(get("/users/{id}", manager.getId()).contentType(MediaType.APPLICATION_JSON))
