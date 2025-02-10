@@ -1,6 +1,7 @@
 package ru.dikun.prototype.controllers;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,14 +18,16 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.BDDMockito.given;
 
 import ru.dikun.prototype.PrototypeApplication;
+import ru.dikun.prototype.controllers.dto.UserDto;
 import ru.dikun.prototype.domain.UserEntity;
 import ru.dikun.prototype.repos.RoleRepo;
 import ru.dikun.prototype.repos.UserRepo;
@@ -47,28 +50,40 @@ public class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    private String login = "manager@company.ru";
+    @Autowired
+    ObjectMapper objectMapper;
+
+    UserDto userDto;
+    
+    private String managersLogin = "manager@company.ru";
+    private String internsLogin = "intern@company.ru";
+
 
     @BeforeEach
     private void setup() {
-
         UserEntity manager = new UserEntity();
-        manager.setLogin("manager@company.ru");
+        manager.setLogin(managersLogin);
         manager.setPassword(passwordEncoder.encode("secret"));
         manager.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STAFF").get()));
         userRepo.save(manager);
-
     }
+
     @AfterEach
     public void resetDb() {
-        UserEntity manager = userRepo.findByLogin(login).get();
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
         userRepo.delete(manager);
+
+        Optional<UserEntity> factoryUser = userRepo.findByLogin(internsLogin);
+        if (factoryUser.isPresent())
+            userRepo.delete(factoryUser.get());
     }
+
+    // tests
 
     @Test
     @WithMockUser(roles="ADMIN")
     void checkManagerProfile() throws Exception {
-        UserEntity manager = userRepo.findByLogin(login).get();
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
 
         mockMvc.perform(get("/users/{id}", manager.getId()).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -78,10 +93,31 @@ public class UserControllerTest {
     @Test
     @WithAnonymousUser
     void cannotCheckManagerProfile() throws Exception {
-        UserEntity manager = userRepo.findByLogin(login).get();
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
 
         mockMvc.perform(get("/users/{id}", manager.getId()).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles="ADMIN")
+    void AdminCreateManagerSAcconunt() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setLogin(internsLogin);
+        userDto.setPassword("secret");
+
+        mockMvc.perform(post("/users", userDto)
+               .content(objectMapper.writeValueAsString(userDto)).contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andExpect(jsonPath("$.login", is(userDto.getLogin())));
+    }
+
+    @Test
+    @WithMockUser(roles="MODER")
+    void ModerCreateManagerSAcconunt() throws Exception {
+        mockMvc.perform(post("/users", userDto)
+               .content(objectMapper.writeValueAsString(userDto)).contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isForbidden());
     }
     
 }
