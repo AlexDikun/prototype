@@ -23,12 +23,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ru.dikun.prototype.PrototypeApplication;
 import ru.dikun.prototype.controllers.dto.UserDto;
 import ru.dikun.prototype.domain.UserEntity;
+import ru.dikun.prototype.domain.RoleEntity;
 import ru.dikun.prototype.repos.RoleRepo;
 import ru.dikun.prototype.repos.UserRepo;
 
@@ -102,7 +104,7 @@ public class UserControllerTest {
     @Test
     @WithMockUser(roles="ADMIN")
     void AdminCreateManagerSAcconunt() throws Exception {
-        UserDto userDto = new UserDto();
+        userDto = new UserDto();
         userDto.setLogin(internsLogin);
         userDto.setPassword("secret");
 
@@ -119,5 +121,25 @@ public class UserControllerTest {
                .content(objectMapper.writeValueAsString(userDto)).contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isForbidden());
     }
-    
+
+    @Test
+    @WithMockUser(roles="ADMIN")
+    void adminChangeUserRole() throws Exception {
+        RoleEntity officialLetter = roleRepo.findByName("ROLE_MODER").get();
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
+
+        mockMvc.perform(patch("/roles/{role_id}/users/{id}", officialLetter.getId(), manager.getId())
+            .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles="MODER")
+    void moderChangeUserRole() throws Exception {
+        RoleEntity officialLetter = roleRepo.findByName("ROLE_MODER").get();
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
+
+        mockMvc.perform(patch("/roles/{role_id}/users/{id}", officialLetter.getId(), manager.getId())
+            .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
+
 }
