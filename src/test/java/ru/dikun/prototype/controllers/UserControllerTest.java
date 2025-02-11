@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -72,8 +73,9 @@ public class UserControllerTest {
 
     @AfterEach
     public void resetDb() {
-        UserEntity manager = userRepo.findByLogin(managersLogin).get();
-        userRepo.delete(manager);
+        Optional<UserEntity> manager = userRepo.findByLogin(managersLogin);
+        if (manager.isPresent())
+            userRepo.delete(manager.get());
 
         Optional<UserEntity> factoryUser = userRepo.findByLogin(internsLogin);
         if (factoryUser.isPresent())
@@ -152,7 +154,6 @@ public class UserControllerTest {
         mockMvc.perform(patch("/users/{id}", manager.getId(), userDto)
                .content(objectMapper.writeValueAsString(userDto)).contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
-
     }
 
     @Test
@@ -164,7 +165,25 @@ public class UserControllerTest {
 
         mockMvc.perform(patch("/users/{id}", manager.getId(), userDto).contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isForbidden());
-
     }
 
+    @Test
+    @WithMockUser(roles="ADMIN")
+    void adminDeletesUser() throws Exception {
+        userDto = new UserDto();
+        userDto.setLogin(managersLogin);
+
+        mockMvc.perform(delete("/users", userDto).content(objectMapper.writeValueAsString(userDto))
+               .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(roles="MODER")
+    void moderDeletesUser() throws Exception {
+        userDto = new UserDto();
+        userDto.setLogin(managersLogin);
+
+        mockMvc.perform(delete("/users", userDto).content(objectMapper.writeValueAsString(userDto))
+               .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
 }
