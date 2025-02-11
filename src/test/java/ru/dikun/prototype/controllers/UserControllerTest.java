@@ -142,4 +142,29 @@ public class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
     }
 
+    @Test
+    @WithMockUser(roles="ADMIN")
+    void adminChangeUserPassword() throws Exception {
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
+        userDto = new UserDto();
+        userDto.setPassword("new_password");
+
+        mockMvc.perform(patch("/users/{id}", manager.getId(), userDto)
+               .content(objectMapper.writeValueAsString(userDto)).contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithMockUser(roles="MODER")
+    void moderChangeUserPassword() throws Exception {
+        UserEntity manager = userRepo.findByLogin(managersLogin).get();
+        userDto = new UserDto();
+        userDto.setPassword("new_password");
+
+        mockMvc.perform(patch("/users/{id}", manager.getId(), userDto).contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isForbidden());
+
+    }
+
 }
