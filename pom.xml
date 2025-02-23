@@ -112,6 +112,26 @@
             <version>2.2.1</version>
             <scope>test</scope>
         </dependency>
+
+		 <!-- Hibernate Validator -->
+    	<dependency>
+        	<groupId>org.hibernate.validator</groupId>
+       		<artifactId>hibernate-validator</artifactId>
+   		</dependency>
+
+		<!-- Jakarta Bean Validation API -->
+    	<dependency>
+        	<groupId>jakarta.validation</groupId>
+        	<artifactId>jakarta.validation-api</artifactId>
+    	</dependency>
+
+		<!-- AssertJ for assertions -->
+    	<dependency>
+        	<groupId>org.assertj</groupId>
+        	<artifactId>assertj-core</artifactId>
+        	<version>3.19.0</version>
+        	<scope>test</scope>
+    	</dependency>
 	</dependencies>
 
 	<build>

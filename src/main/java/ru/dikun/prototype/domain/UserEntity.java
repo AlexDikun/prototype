@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Collection;
@@ -24,9 +26,12 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "login", unique = true)
+    @NotBlank
     private String login;
 
     @Column(name = "password")
+    @Size(min=6)
+    @NotBlank
     private String password;
 
     @ManyToMany
