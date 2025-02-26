@@ -51,4 +51,16 @@ public class UserEntityTests {
         Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
         assertThat(violations).isEmpty();
     }
+
+    @Test
+    void testUserValidationWithBlankLogin() {
+        UserEntity user = new UserEntity();
+        user.setLogin(""); // blank login
+        user.setPassword(passwordEncoder.encode("secret"));
+
+        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("must not be blank"))).isTrue();
+    }
+
 }
