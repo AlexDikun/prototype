@@ -1,6 +1,7 @@
 package ru.dikun.prototype.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,8 @@ public class UserEntityTests {
 
     @Test
     void testUserValidation() {
+        System.out.println("Создаем валидного пользователя!");
+
         UserEntity user = new UserEntity();
         user.setLogin("test@company.ru");
         user.setPassword(passwordEncoder.encode("secret"));
@@ -54,6 +57,8 @@ public class UserEntityTests {
 
     @Test
     void testUserValidationWithBlankLogin() {
+        System.out.println("Попытка создать пользователя с пустым логином!");
+
         UserEntity user = new UserEntity();
         user.setLogin(""); // blank login
         user.setPassword(passwordEncoder.encode("secret"));
@@ -61,6 +66,32 @@ public class UserEntityTests {
         Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
         assertThat(violations).isNotEmpty();
         assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("must not be blank"))).isTrue();
+    }
+
+    @Test
+    void testUserValidationWithBlankPassword() {
+        System.out.println("Попытка создать пользователя с пустым паролем!");
+
+        UserEntity user = new UserEntity();
+        user.setLogin("bagowix@company.ru"); 
+        user.setPassword(""); // blank password
+
+        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("must not be blank"))).isTrue();
+    }
+
+    @Test
+    void testUserValidationWithShortPassword() {
+        System.out.println("Попытка создать пользователя с коротким паролем!");
+
+        UserEntity user = new UserEntity();
+        user.setLogin("bagowix@company.ru");
+        user.setPassword("1");
+
+        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream().anyMatch(violation -> violation.getMessage().contains("error"))).isTrue();
     }
 
 }
