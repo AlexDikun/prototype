@@ -30,8 +30,8 @@ public class UserEntity {
     private String login;
 
     @Column(name = "password")
-    @Size(min=6)
-    @NotBlank
+    @Size(min=6, message="error")
+    @NotBlank(message = "must not be blank")
     private String password;
 
     @ManyToMany
