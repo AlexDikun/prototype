@@ -26,7 +26,7 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "login", unique = true)
-    @NotBlank
+    @NotBlank(message = "must not be blank")
     private String login;
 
     @Column(name = "password")
