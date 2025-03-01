@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.Data;
 import ru.dikun.prototype.domain.PrivilegeEntity;
 import ru.dikun.prototype.domain.RoleEntity;
 import ru.dikun.prototype.domain.UserEntity;
@@ -60,12 +61,21 @@ public class UserService implements UserDetailsService {
         final List<String> privileges = new ArrayList<>();
         final List<PrivilegeEntity> collection = new ArrayList<>();
 
-        for (final RoleEntity role : roles) {
-            privileges.add(role.getName());
-            collection.addAll(role.getPrivileges());
+        if (roles != null) {
+            for (final RoleEntity role : roles) {
+                if (role != null && role.getName() != null) {
+                    privileges.add(role.getName());
+                }
+                if (role.getPrivileges() != null) {
+                    collection.addAll(role.getPrivileges());
+                }
+            }
         }
+    
         for (final PrivilegeEntity item : collection) {
-            privileges.add(item.getName());
+            if (item != null && item.getName() != null) {
+                privileges.add(item.getName());
+            }
         }
 
         return privileges;
@@ -73,5 +83,18 @@ public class UserService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> getAuthorities(final Collection<RoleEntity> roles) {
         return getGrantedAuthorities(getPrivileges(roles));
+    }
+
+    // Геттеры для приватных методов
+    public List<GrantedAuthority> getGrantedAuthoritiesPublic(final List<String> privileges) {
+        return getGrantedAuthorities(privileges);
+    }
+
+    public List<String> getPrivilegesPublic(final Collection<RoleEntity> roles) {
+        return getPrivileges(roles);
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthoritiesPublic(final Collection<RoleEntity> roles) {
+        return getAuthorities(roles);
     }
 }
