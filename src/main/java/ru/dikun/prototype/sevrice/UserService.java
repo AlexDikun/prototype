@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.Data;
 import ru.dikun.prototype.domain.PrivilegeEntity;
 import ru.dikun.prototype.domain.RoleEntity;
 import ru.dikun.prototype.domain.UserEntity;
