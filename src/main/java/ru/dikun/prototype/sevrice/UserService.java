@@ -33,18 +33,13 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String login) {
-        try {
-            final Optional<UserEntity> optUser = userRepo.findByLogin(login);
-            if (optUser.isEmpty()) {
-                throw new UsernameNotFoundException("No user found with username: " + login);
-            }
-            UserEntity user = optUser.get();
-
-            return new org.springframework.security.core.userdetails.User(
-                user.getLogin(), user.getPassword(), true, true, true, true, getAuthorities(user.getRoles()));
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+        final Optional<UserEntity> optUser = userRepo.findByLogin(login);
+        if (optUser.isEmpty()) {
+            throw new UsernameNotFoundException("No user found with username: " + login);
         }
+        UserEntity user = optUser.get();
+        return new org.springframework.security.core.userdetails.User(
+            user.getLogin(), user.getPassword(), true, true, true, true, getAuthorities(user.getRoles()));
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(final List<String> privileges) {
