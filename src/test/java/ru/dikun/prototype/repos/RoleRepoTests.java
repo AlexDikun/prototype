@@ -17,9 +17,6 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import ru.dikun.prototype.domain.RoleEntity;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class RoleRepoTests {
 
     @Mock
