@@ -3,24 +3,28 @@ package ru.dikun.prototype.controllers;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,14 +45,14 @@ import ru.dikun.prototype.repos.UserRepo;
 @TestPropertySource(locations = "classpath:application.properties")
 public class UserControllerTest {
 
-    @Autowired
-    UserRepo userRepo;
+    @MockBean
+    private UserRepo userRepo;
 
-    @Autowired
-    RoleRepo roleRepo;
+    @MockBean
+    private RoleRepo roleRepo;
 
-    @Autowired
-    PasswordEncoder passwordEncoder; 
+    @MockBean
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     MockMvc mockMvc;
@@ -64,22 +68,31 @@ public class UserControllerTest {
 
     @BeforeEach
     private void setup() {
+        MockitoAnnotations.openMocks(this);
+
         UserEntity manager = new UserEntity();
+        manager.setId(4L);
         manager.setLogin(managersLogin);
         manager.setPassword(passwordEncoder.encode("secret"));
-        manager.setRoles(Collections.singletonList(roleRepo.findByName("ROLE_STAFF").get()));
-        userRepo.save(manager);
-    }
 
-    @AfterEach
-    public void resetDb() {
-        Optional<UserEntity> manager = userRepo.findByLogin(managersLogin);
-        if (manager.isPresent())
-            userRepo.delete(manager.get());
+        RoleEntity roleStaff = new RoleEntity();
+        roleStaff.setId(4L);
+        roleStaff.setName("ROLE_STAFF");
+        manager.setRoles(Collections.singletonList(roleStaff));
 
-        Optional<UserEntity> factoryUser = userRepo.findByLogin(internsLogin);
-        if (factoryUser.isPresent())
-            userRepo.delete(factoryUser.get());
+        RoleEntity roleModer = new RoleEntity();
+        roleModer.setId(5L);
+        roleModer.setName("ROLE_MODER");
+
+        reset(userRepo, roleRepo, passwordEncoder);
+
+        when(userRepo.findByLogin(managersLogin)).thenReturn(Optional.of(manager));
+        when(userRepo.findById(4L)).thenReturn(Optional.of(manager));
+
+        when(roleRepo.findByName("ROLE_STAFF")).thenReturn(Optional.of(roleStaff));
+        when(roleRepo.findById(4L)).thenReturn(Optional.of(roleStaff));
+        when(roleRepo.findByName("ROLE_MODER")).thenReturn(Optional.of(roleModer));
+        when(roleRepo.findById(5L)).thenReturn(Optional.of(roleModer));
     }
 
     // tests
@@ -105,7 +118,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(roles="ADMIN")
-    void AdminCreateManagerSAcconunt() throws Exception {
+    void AdminCreateInternSAcconunt() throws Exception {
         userDto = new UserDto();
         userDto.setLogin(internsLogin);
         userDto.setPassword("secret");
@@ -118,7 +131,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(roles="MODER")
-    void ModerCreateManagerSAcconunt() throws Exception {
+    void ModerCreateInternSAcconunt() throws Exception {
         mockMvc.perform(post("/users", userDto)
                .content(objectMapper.writeValueAsString(userDto)).contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isForbidden());
