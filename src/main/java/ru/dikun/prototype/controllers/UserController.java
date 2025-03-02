@@ -62,7 +62,7 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED); 
     }
 
-    @PatchMapping("roles/{role_id}/users/{id}")
+    @PatchMapping("/roles/{role_id}/users/{id}")
     public ResponseEntity<String> updatingUserRole(@PathVariable Long role_id, @PathVariable Long id) {
         System.out.println("Администратор назначает пользователю новую роль!");
 
